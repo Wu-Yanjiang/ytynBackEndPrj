@@ -1,0 +1,18 @@
+server:
+  port: 8971
+spring:
+  profiles:
+    active:
+  main:
+    allow-bean-definition-overriding: false
+  application:
+    name: ytyn-back-end
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:~/test
+    username: sa
+    password: 123456
+  http:
+    encoding:
+      charset: utf-8
+      enabled: true
