@@ -1,6 +1,7 @@
 package com.wyj.ytyn.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wyj.ytyn.entity.SysMenu;
 import com.wyj.ytyn.entity.SysRole;
@@ -23,23 +24,40 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     @Override
     public List<SysMenu> selectMenusByUser(SysUser user) {
-        List<SysMenu> menus = new LinkedList<SysMenu>();
+        List<SysMenu> menus = new LinkedList<>();
         // 管理员显示所有菜单信息
         if (user.isAdmin()) {
-            menus = menuMapper
+            menus = this.baseMapper
                     .selectList(new QueryWrapper<SysMenu>()
                             .in("menu_type", "M", "C")
                             .eq("visible", 0)
                             .orderByAsc("parent_id", "order_num"));
         } else {
-            menus = menuMapper.selectList(new QueryWrapper<SysMenu>());
+            // todo 多表
+            menus = this.baseMapper
+                    .selectList(new QueryWrapper<SysMenu>());
         }
         return menus;
     }
 
     @Override
     public List<SysMenu> selectMenuList(SysMenu menu, Long userId) {
-        return null;
+        List<SysMenu> menuList = null;
+        if (SysUser.isAdmin(userId)) {
+            QueryWrapper<SysMenu> ew = new QueryWrapper<>();
+            if (StringUtils.isNotBlank(menu.getMenuName())) {
+                ew = ew.apply("menu_name like concat('%',{0},'%')", menu.getMenuName());
+            }
+            if (StringUtils.isNotBlank(menu.getVisible())) {
+                ew = ew.eq("visible", menu.getVisible());
+            }
+            menuList = this.baseMapper.selectList(ew);
+        } else {
+            menu.getParams().put("userId", userId);
+            // todo 多表
+            menuList = this.baseMapper.selectList(new QueryWrapper<SysMenu>());
+        }
+        return menuList;
     }
 
     @Override
