@@ -33,11 +33,9 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
                             .eq("visible", 0)
                             .orderByAsc("parent_id", "order_num"));
         } else {
-            // todo 多表
-            menus = this.baseMapper
-                    .selectList(new QueryWrapper<SysMenu>());
+            menus = menuMapper.selectMenusByUserId(user.getUserId());
         }
-        return menus;
+        return getChildPerms(menus, 0);
     }
 
     @Override
@@ -54,8 +52,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
             menuList = this.baseMapper.selectList(ew);
         } else {
             menu.getParams().put("userId", userId);
-            // todo 多表
-            menuList = this.baseMapper.selectList(new QueryWrapper<SysMenu>());
+            menuList = menuMapper.selectMenuListByUserId(menu);
         }
         return menuList;
     }
