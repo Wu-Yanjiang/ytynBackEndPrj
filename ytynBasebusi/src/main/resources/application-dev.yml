@@ -6,7 +6,7 @@ spring:
     druid:
       # 主库数据源
       master:
-        url: jdbc:h2:~/test;MVCC=TRUE
+        url: jdbc:h2:tcp://localhost/~/test;MVCC=TRUE
         username: sa
         password: 123456
       # 从库数据源
@@ -55,3 +55,10 @@ spring:
         wall:
           config:
             multi-statement-allow: true
+
+# PageHelper分页插件
+pagehelper:
+  helperDialect: h2
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql

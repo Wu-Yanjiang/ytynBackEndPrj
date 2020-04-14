@@ -8,6 +8,7 @@ import com.wyj.ytyn.entity.SysRole;
 import com.wyj.ytyn.entity.SysUser;
 import com.wyj.ytyn.entity.Ztree;
 import com.wyj.ytyn.mapper.SysMenuMapper;
+import com.wyj.ytyn.mapper.SysRoleMenuMapper;
 import com.wyj.ytyn.service.ISysMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,10 +18,13 @@ import java.util.*;
 @Service
 public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> implements ISysMenuService {
 
-    public static final String PERMISSION_STRING = "perms[\"{0}\"]" ;
+    public static final String PERMISSION_STRING = "perms[\"{0}\"]";
 
     @Autowired
     private SysMenuMapper menuMapper;
+
+    @Autowired
+    private SysRoleMenuMapper roleMenuMapper;
 
     @Override
     public List<SysMenu> selectMenusByUser(SysUser user) {
@@ -59,7 +63,13 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     @Override
     public List<SysMenu> selectMenuAll(Long userId) {
-        return null;
+        List<SysMenu> menuList = null;
+        if (SysUser.isAdmin(userId)) {
+            menuList = this.baseMapper.selectList(new QueryWrapper<SysMenu>().orderByAsc("parent_id", "order_num"));
+        } else {
+            menuList = menuMapper.selectMenuAllByUserId(userId);
+        }
+        return menuList;
     }
 
     @Override

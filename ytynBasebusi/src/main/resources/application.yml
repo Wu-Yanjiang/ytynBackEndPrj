@@ -8,7 +8,7 @@ server:
     max-threads: 800
     min-spare-threads: 30
     basedir: D:\tomcat
-  # 应用访问路径
+
 spring:
   profiles:
     active: dev
@@ -16,11 +16,11 @@ spring:
     allow-bean-definition-overriding: false
   application:
     name: ytyn-back-end
-  datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:~/test
-    username: sa
-    password: 123456
+#  datasource:
+#    driver-class-name: org.h2.Driver
+#    url: jdbc:h2:tcp://localhost/~/test
+#    username: sa
+#    password: 123456
   http:
     encoding:
       charset: utf-8
@@ -89,3 +89,7 @@ user:
   password:
     # 密码错误{maxRetryCount}次锁定10分钟
     maxRetryCount: 5
+
+
+mybatis-plus:
+    mapper-locations: mapper/*.xml

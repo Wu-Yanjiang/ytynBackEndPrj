@@ -6,6 +6,7 @@ import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.io.ResourceUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.ByteArrayInputStream;
@@ -67,8 +68,12 @@ public class ShiroConfig {
     @Value("${shiro.user.unauthorizedUrl}")
     private String unauthorizedUrl;
 
+    /**
+     * 缓存管理器 使用Ehcache实现
+     */
+    @Bean
     public EhCacheManager getEhCacheManager() {
-        CacheManager cacheManager = CacheManager.getCacheManager("");
+        CacheManager cacheManager = CacheManager.getCacheManager("ytyn");
         EhCacheManager em = new EhCacheManager();
         if (null == cacheManager) {
             em.setCacheManager(new net.sf.ehcache.CacheManager(getCacheManagerConfigFileInputStream()));
@@ -79,6 +84,9 @@ public class ShiroConfig {
         }
     }
 
+    /**
+     * 返回配置文件流 避免ehcache配置文件一直被占用，无法完全销毁项目重新部署
+     */
     protected InputStream getCacheManagerConfigFileInputStream() {
         String configFile = "classpath:ehcache/ehcache-shiro.xml" ;
         try (InputStream inputStream = ResourceUtils.getInputStreamForPath(configFile)) {
